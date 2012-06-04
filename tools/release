@@ -47,7 +47,7 @@ read MGDB
 
 if [[ $MGDB = 'y' || $MGDB = 'yes' ]]; then
   rm db > /dev/null 2>&1
-  node ./initdb.js
+  node ./tools/initdb.js
 fi
 
 echo
