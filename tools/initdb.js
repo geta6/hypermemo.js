@@ -1,5 +1,5 @@
 var sqlite = require('sqlite3').verbose()
-  , db = new sqlite.Database(__dirname + '/db');
+  , db = new sqlite.Database(__dirname + '/../db');
 
 db.serialize(function () {
   db.run(['CREATE TABLE items (id  INTEGER  PRIMARY KEY  AUTOINCREMENT, v  INTEGER, date  DATETIME',
