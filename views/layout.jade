@@ -1,0 +1,38 @@
+!!! 5
+
+html
+
+  head
+    meta(charset='utf-8')
+    title= title
+    link(rel='stylesheet', href='/stylesheets/cssreset-min.css')
+    link(rel='stylesheet', href='/stylesheets/style.css')
+
+  body
+
+    div(id='atrib', class='container')
+      div(class='cellr')
+        div(class='cells')
+          div(id='work', class='cell') Work
+            span #{types.work}
+          div(id='todo', class='cell') ToDo
+            span #{types.todo}
+          div(id='idea', class='cell') Idea
+            span #{types.idea}
+          div(id='none', class='cell') None
+            span #{types.none}
+          div(id='misc', class='cell') Misc
+            span #{types.misc}
+          div(id='done', class='cell') Done
+            span #{types.done}
+
+    div(id='stashbind')
+      div(id='stashzone')
+        div(id='stashhead')
+
+    div(id='area')!= body
+
+    script(src='/socket.io/socket.io.js')
+    script(src='/javascripts/jquery.min.js')
+    script(src='/javascripts/jquery-ui.min.js')
+    script(src='/javascripts/script.js')

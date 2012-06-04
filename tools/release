@@ -1,0 +1,55 @@
+#!/bin/zsh
+
+if [ $0 = './release' ]; then
+  cd ..
+  echo '(cd ..)'
+fi
+
+TMP=`mktemp`
+SERVER='./app.js'
+CLIENT='./public/javascripts/script.js'
+
+
+echo -n "Select Port (Default 3000): "
+read PORT
+
+if [[ $PORT != '' ]]; then
+  cat $SERVER | sed -e "s/app.listen(3000/app.listen(${PORT}/g" > $TMP
+  cat $TMP > $SERVER
+  rm $TMP
+else
+  PORT=3000
+fi
+
+
+echo -n "Select Address (Default localhost): "
+read ADDR
+
+if [[ $ADDR != '' ]]; then
+  cat $CLIENT | sed -e "s/io.connect('http:\/\/localhost')/io.connect('http:\/\/${ADDR}:${PORT}')/g" > $TMP
+  cat $TMP > $CLIENT
+  rm $TMP
+else
+  ADDR='localhost'
+fi
+
+
+echo -n "Install Modules? [y/n]: "
+read GTMD
+
+if [[ $GTMD = 'y' || $GTMD = 'yes' ]]; then
+  npm install
+fi
+
+
+echo -n "Migrate Database? [y/n]: "
+read MGDB
+
+if [[ $MGDB = 'y' || $MGDB = 'yes' ]]; then
+  rm db > /dev/null 2>&1
+  node ./initdb.js
+fi
+
+echo
+echo "Done. Exec 'node app.js' and access http://${ADDR}:${PORT}"
+

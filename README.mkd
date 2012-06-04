@@ -1,0 +1,22 @@
+still in BETA
+=============
+
+### Requirement
+
+* `nodejs >= 0.6.12`
+* `npm`
+
+### Install
+
+exec `./tools/release`
+
+### What's this
+
+inspired by [HyperMemo](http://akiroom.com/freeware/recommend/hypermemo.html).
+
+stickies like real time memo pad system using websocket.
+
+### License
+
+license follows HyperMemo.
+

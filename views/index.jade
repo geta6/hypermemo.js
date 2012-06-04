@@ -1,0 +1,9 @@
+each item in items
+  div(
+    id='item#{item.id}',
+    class='paper',
+    x-type='#{item.type}',
+    style='left:#{item.x}px;top:#{item.y}px;z-index:#{item.z};width:#{item.w}px;height:#{item.h}px')
+    span(class='view')= item.text
+    div(class='delbtn') x
+    div(class='date')= item.date

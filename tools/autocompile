@@ -1,0 +1,28 @@
+#!/bin/zsh
+
+if [ $0 = './autocompile' ]; then
+  cd ..
+  echo '(cd..)'
+fi
+
+LI='./public/stylesheets/style.less'
+LO='./public/stylesheets/style.css'
+LM=`stat -c %Y $LI`
+
+lessc --yui-compress $LI > $LO
+echo "LESS compiled\n`date`" | growlnotify -t autocompile
+
+while [ true ]; do
+  LM2=`stat -c %Y $LI`
+  if [ $LM != $LM2 ]; then
+    LM=$LM2
+    lessc --yui-compress $LI > $LO
+    if [[ ! -n `which growlnotify` ]]; then
+      echo "LESS compiled\n`date`" | growlnotify -t autocompile
+    else
+      echo "LESS compiled  `date`"
+    fi
+  fi
+  sleep 1
+done
+
