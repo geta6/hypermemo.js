@@ -59,6 +59,12 @@ app.get('/', function (req, res) {
 });
 
 app.post('/create', function (req, res) {
+  var d = new Date(req.body.date * 1000);
+  req.body.date = [d.getYear()+1900,d.getMonth()+1,d.getDate()].map(function (a) {
+    return 2 > String(a).length ? '0' + String(a) : a
+  }).join('.') + ' ' + [d.getHours(),d.getMinutes()].map(function (a) {
+    return 2 > String(a).length ? '0' + String(a) : a;
+  }).join(':');
   res.render('index', {
     layout: false,
     items: [req.body]
@@ -79,16 +85,22 @@ app.listen(3000, function(){
 });
 
 // Socket.io
-var locked = [];
+var lock = { on: [], ls : []};
 
 io.sockets.on('connection', function (socket) {
+
+  lock.ls.push(socket.store.id);
+
+  socket.on('disconnect', function (e, sock) {
+    lock.ls.splice(lock.ls.indexOf(socket.store.id), 1);
+  });
 
   // Create Text
 
   socket.on('create', function (data) {
     db.serialize(function () {
       var stm = db.prepare('INSERT INTO items (text,type,date,v,x,y,z,w,h) VALUES (?,?,?,?,?,?,?,?,?)');
-      stm.run(['empty', 'none', parseInt(new Date().getTime()/1000), 1, data.x, data.y, 60, 200, 180]);
+      stm.run(['empty', 'none', parseInt(new Date().getTime()/1000), 1, data.x, data.y, 60, 180, 160]);
       stm.finalize();
       db.each('SELECT * FROM items ORDER BY id DESC LIMIT 1', function (e, data) {
         io.sockets.emit('create', data);
@@ -173,15 +185,24 @@ io.sockets.on('connection', function (socket) {
 
   socket.on('lock', function (data) {
     if (data.lockdrag) {
-      locked.push(data.id);
+      lock.on.push({ belong : socket.store.id, target : data.id });
     } else {
-      locked.splice(locked.indexOf(data.id), 1);
+      for (var i = 0; i < lock.on.length; i++) {
+        if (lock.on[i].target == data.id) {
+          lock.on.splice(i, 1);
+        }
+      }
     }
     socket.broadcast.emit('lock', data);
   });
 
-  for (var i = 0; i < locked.length; i++) {
-    socket.emit('lock', { id : locked[i], lockdrag : true });
+  for (var i = 0; i < lock.on.length; i++) {
+    if (-1 < lock.ls.indexOf(lock.on[i].belong)) {
+      socket.emit('lock', { id : lock.on[i].target, lockdrag : true });
+    } else {
+      io.sockets.emit('lock', { id : lock.on[i].target, lockdrag : false });
+      lock.on.splice(i, 1);
+    }
   }
 
 });
