@@ -49,19 +49,6 @@
           }
           sockets.move(this, false);
         });
-        /*
-        if (prsen) {
-          var wid = ~~(400 * (1 - event.clientY / win.h));
-          console.log(wid);
-          if (100 > wid) {
-            wid = 100;
-          } else if (wid > 600) {
-            wid = 600;
-          }
-          $(this).css({ width : wid + 'px', height : wid + 'px'});
-          socket.emit('chwh', { w : wid, h : wid, id : this.id.substr(4), write: true});
-        }
-        */
       },
       stop : function (e, ui) {
         setTimeout(function () {
@@ -166,18 +153,23 @@
   });
 
   socket.on('drop', function (data) {
-    $('#' + data.id).fadeOut(240, function () {
-      var tick = $('#' + $(this).attr('x-type')).find('span')
-        , tack = parseInt(tick.text())
-        , rock = $('#stashbind').css('display') == 'none';
-      if (rock) {
-        tick.text(tack+1);
-        $(this).remove();
-      } else {
-        tick.text(tack-1);
-        $('#area').append($(this).css({display:'block'}));
-      }
-    });
+    var rock = $('#' + data.id)
+      , tick = $('#' + data.type).find('span')
+      , tack = parseInt(tick.text())
+    rock.remove();
+    if (data.v) {
+      $.ajax({
+        url  : '/callee',
+        type : 'POST',
+        data : { id : data.id},
+        complete : function (data) {
+          tick.text(tack-1);
+          $('#area').append($(data.responseText));
+        }
+      });
+    } else {
+      tick.text(tack+1);
+    }
   });
 
   socket.on('lock', function (data) {
@@ -298,13 +290,6 @@
         stash.head.text('');
       });
     }
-  });
-
-  var prsen;
-  $('#prsen').droppable({
-    tolerance : 'pointer',
-    over : function () { prsen = true },
-    out : function () { prsen = false }
   });
 
   $(document).on('dblclick', '.paper', function (e) {

@@ -80,6 +80,15 @@ app.post('/types', function (req, res) {
   });
 });
 
+app.post('/callee', function (req, res) {
+  db.all('SELECT * FROM items WHERE id = ?', [req.body.id.substr(4)], function (e, items) {
+    res.render('index', {
+      layout : false,
+      items: items
+    });
+  });
+});
+
 app.listen(3000, function(){
   console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
 });
@@ -174,10 +183,17 @@ io.sockets.on('connection', function (socket) {
   });
 
   socket.on('drop', function (data) {
-    var stm = db.prepare('UPDATE items SET v = ? WHERE id = ?');
-    stm.run(data.v, data.id.substr(4));
-    stm.finalize();
-    io.sockets.emit('drop', data);
+    db.serialize(function () {
+      var stm = db.prepare('UPDATE items SET v = ? WHERE id = ?');
+      stm.run(data.v, data.id.substr(4));
+      stm.finalize();
+      db.all('SELECT * FROM items WHERE id = ?', [data.id.substr(4)], function (e, items) {
+        item    = items[0];
+        item.v  = data.v;
+        item.id = data.id;
+        io.sockets.emit('drop', item);
+      });
+    });
   });
 
 
