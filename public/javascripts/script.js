@@ -263,33 +263,27 @@
     var pick = $(this).css('background-color')
       , text = this.id
       , stash = { bind : $('#stashbind'), head : $('#stashhead'), zone : $('#stashzone') }
-    if (stash.head.text() != e.target.id) {
-      stash.bind.fadeOut(240, function () {
-        $.ajax({
-          url  : '/types',
-          type : 'POST',
-          data : { type : text.toLowerCase() },
-          beforeSend : function () {
-            stash.zone.find('.paper').remove();
-          },
-          complete : function (data) {
-            stash.zone.append($(data.responseText).handleable());
-          }
-        });
-        stash.head.text(text);
-        stash.bind.css({ backgroundColor: pick }).slideDown(240).on('click', function (e) {
-          if (e.target.id == 'stashzone') {
-            stash.bind.off('click').slideUp(240, function () {
-              stash.head.text('');
-            });
-          }
-        });
+    stash.bind.fadeOut(240, function () {
+      $.ajax({
+        url  : '/types',
+        type : 'POST',
+        data : { type : text.toLowerCase() },
+        beforeSend : function () {
+          stash.zone.find('.paper').remove();
+        },
+        complete : function (data) {
+          stash.zone.append($(data.responseText).handleable());
+        }
       });
-    } else {
-      stash.bind.off('click').slideUp(240, function () {
-        stash.head.text('');
+      stash.head.text(text);
+      stash.bind.css({ backgroundColor: pick }).slideDown(240).on('click', function (e) {
+        if (e.target.id == 'stashzone') {
+          stash.bind.off('click').slideUp(240, function () {
+            stash.head.text('');
+          });
+        }
       });
-    }
+    });
   });
 
   $(document).on('dblclick', '.paper', function (e) {
