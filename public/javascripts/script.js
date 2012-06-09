@@ -164,7 +164,7 @@
         data : { id : data.id},
         complete : function (data) {
           tick.text(tack-1);
-          $('#area').append($(data.responseText));
+          $('#area').append($(data.responseText).handleable());
         }
       });
     } else {
@@ -208,6 +208,30 @@
     }
   });
 
+  // TODO:dropimage
+  var tmpcd;
+  $(document).on({
+    drop: function (e) {
+      e.preventDefault();
+      console.log(tmpcd, e, e.originalEvent.dataTransfer.files);
+    },
+    dragenter: function (e) {
+      e.preventDefault();
+      console.log('enter', e);
+    },
+    dragover: function (e) {
+      e.preventDefault();
+      console.log('over', e)
+    },
+    dragleave: function (e) {
+      e.preventDefault();
+      console.log('leave', e);
+    },
+    mousemove: function (e) {
+      tmpcd = { x : e.pageX, y : e.pageY };
+    }
+  });
+
 
   // Fix zIndex
 
@@ -221,6 +245,10 @@
     sockets.deep(this, true);
   });
 
+
+  $(document).on('scroll', '.paper span', function (e) {
+    console.log(e.target);
+  });
 
   $(document).on('mouseover mousemove mouseout', '.paper, .paper div', function (e) {
     if ('mouseout' != e.type && candel) {
@@ -317,7 +345,8 @@
 
   var candel = false, command = false;
   $(document).on('keydown keyup', function (e) {
-    if (91 == e.keyCode || 224 == e.keyCode) {
+    console.log(e.keyCode);
+    if (91 == e.keyCode || 93 == e.keyCode || 224 == e.keyCode) {
       command = 'keydown' == e.type;
     }
     if (18 == e.keyCode) {

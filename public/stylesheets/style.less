@@ -30,16 +30,18 @@
 
 @barsize : 24px;
 
-@y : rgb(254,244,156);
-@b : rgb(182,202,255);
-@r : rgb(255,199,199);
-@c : rgb(173,244,255);
-@g : rgb(178,255,161);
-@w : rgb(238,238,238);
+@y : #FEF49C;
+@b : #B6CAFF;
+@r : #FFC7C7;
+@c : #ADF4FF;
+@g : #B2FFA1;
+@w : #EEEEEE;
+@k : #96A0AA;
 
 html {
   font: 12px/1.5 helvetica,arial,sans-serif;
-  background: url(/images/graph.png);
+  background-color: @k;
+  background-image: url(/images/graph.png);
 }
 
 body {
@@ -89,9 +91,9 @@ body {
 
 .paper {
   display: inline-block;
+  padding: 10px;
   z-index: 60;
   position: absolute !important;
-  padding: 10px;
   top: 50px;
   left: 50px;
   width: 200px;
@@ -119,8 +121,9 @@ body {
   span {
     display: block;
     white-space: pre-wrap;
+    word-break: break-all;
     line-height: 18px;
-    overflow-y: scroll;
+    overflow: hidden;
     height: 100%;
   }
   textarea {
@@ -166,7 +169,7 @@ body {
   left: 0;
   bottom: 0;
   right: 0;
-  background-image: url(/images/graph0.png);
+  background-image: url(/images/graph.png);
 }
 
 #stashhead {
